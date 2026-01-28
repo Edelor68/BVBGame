@@ -27,7 +27,7 @@
 
 #map {
 	aspect-ratio: 819 / 1024;
-	background-image: url("./../imgs/Map_Zwischenstand.jpg");
+	background-image: url("../imgs/Map_Zwischenstand.jpg");
 	background-size: cover;
 	background-repeat: no-repeat;
 	width: 100%;
