@@ -1,4 +1,4 @@
-import Players from ./player.js
+import Players from "./player.js"
 
 function setup(){
 	const map = document.getElementById("map");
