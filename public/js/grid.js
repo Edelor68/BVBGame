@@ -4,7 +4,6 @@ function setup(){
 	const map = document.getElementById("map");
 	const combat = document.getElementById("combat");
 	
-	const p = new Players;
 	
 	drawGrid(combat, 8, 10);
 	drawGrid(map, 63, 29);
@@ -300,6 +299,6 @@ function drawSmoothPath(svg) {
 
 
 
-
+const p = new Players;
 
 window.addEventListener("load", setup);
