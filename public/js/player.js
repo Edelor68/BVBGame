@@ -18,7 +18,7 @@ export class Players {
         const { x, y } = getHexCenter(hex);
 
         const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
-        img.setAttribute("href", "dragon.jpg");
+        img.setAttribute("href", "../../imgs/monsters/dragon.png");
         img.setAttribute("width", 120);
         img.setAttribute("height", 120);
 
