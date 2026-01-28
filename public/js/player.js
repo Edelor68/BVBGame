@@ -34,7 +34,7 @@ export default class Players {
 
         Object.keys(this[playerName]).forEach((p) => {
             if (this[playerName][p].position) {
-                const { x, y } = getHexCenter(this.[playerName][svg.getAttribute("id")].position);
+                const { x, y } = getHexCenter(this[playerName][svg.getAttribute("id")].position);
 
                 const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
                 img.setAttribute("href", imgL);
