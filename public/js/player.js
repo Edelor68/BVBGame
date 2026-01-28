@@ -18,8 +18,8 @@ export default class Players {
 
     createPlayer(svg, playerName, imgL) {
 
-        if (!this.[playerName]) {
-            this.[playerName] = {
+        if (!this[playerName]) {
+            this[playerName] = {
                 areas: {
                     map: {
                         position: null
@@ -32,8 +32,8 @@ export default class Players {
             };
         }
 
-        Object.keys(this.[playerName]).forEach((p) => {
-            if (this.[playerName][p].position) {
+        Object.keys(this[playerName]).forEach((p) => {
+            if (this[playerName][p].position) {
                 const { x, y } = getHexCenter(this.[playerName][svg.getAttribute("id")].position);
 
                 const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
@@ -48,7 +48,7 @@ export default class Players {
                 svg.appendChild(img);
 
                 // store reference
-                this.[playerName].element = img;
+                this[playerName].element = img;
             }
         })
 
@@ -56,24 +56,24 @@ export default class Players {
     }
 
     getPlayers() {
-        return this.players;
+        return this;
     }
 
     movePlayerTo(hex, playerName) {
         const cube = JSON.parse(hex.dataset.cube);
         const grid = hex.dataset.grid; // "map" or "combat"
 
-        const coords = this.[playerName][grid].coordinates;
+        const coords = this[playerName][grid].coordinates;
         coords.q = cube.q;
         coords.r = cube.r;
         coords.s = cube.s;
 
         const { x, y } = getHexCenter(hex);
 
-        const img = this.[playerName].element;
+        const img = this[playerName].element;
         img.setAttribute("x", x - 90);
         img.setAttribute("y", y - 90);
 		
-		this.[playerName][grid].position = hex;
+		this[playerName][grid].position = hex;
     }
 }
