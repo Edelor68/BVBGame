@@ -3,36 +3,38 @@ import {offsetToCube, getHexCenter} from "./grid.js";
 export default class Players {
 	
     constructor() {
-        this.players = {
-            player1: {
+        this.player1 = {
+            areas: {
                 map: {
                     position: null
                 },
                 combat: {
                     position: null
-                },
-                element: null
-            }
+                }
+            },
+            element: null
         };
     }
 
     createPlayer(svg, playerName, imgL) {
 
-        if (!this.players[playerName]) {
-            this.players[playerName] = {
-                map: {
-                    position: null
-                },
-                combat: {
-                    position: null
+        if (!this.[playerName]) {
+            this.[playerName] = {
+                areas: {
+                    map: {
+                        position: null
+                    },
+                    combat: {
+                        position: null
+                    }
                 },
                 element: null
-            }
+            };
         }
 
-        Object.keys(this.players[playerName]).forEach((p) => {
-            if (this.players[playerName][p].position) {
-                const { x, y } = getHexCenter(this.players[playerName][svg.getAttribute("id")].position);
+        Object.keys(this.[playerName]).forEach((p) => {
+            if (this.[playerName][p].position) {
+                const { x, y } = getHexCenter(this.[playerName][svg.getAttribute("id")].position);
 
                 const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
                 img.setAttribute("href", imgL);
@@ -46,7 +48,7 @@ export default class Players {
                 svg.appendChild(img);
 
                 // store reference
-                this.players[playerName].element = img;
+                this.[playerName].element = img;
             }
         })
 
@@ -61,17 +63,17 @@ export default class Players {
         const cube = JSON.parse(hex.dataset.cube);
         const grid = hex.dataset.grid; // "map" or "combat"
 
-        const coords = this.players[playerName][grid].coordinates;
+        const coords = this.[playerName][grid].coordinates;
         coords.q = cube.q;
         coords.r = cube.r;
         coords.s = cube.s;
 
         const { x, y } = getHexCenter(hex);
 
-        const img = this.players[playerName].element;
+        const img = this.[playerName].element;
         img.setAttribute("x", x - 90);
         img.setAttribute("y", y - 90);
 		
-		this.players[playerName][grid].position = hex;
+		this.[playerName][grid].position = hex;
     }
 }

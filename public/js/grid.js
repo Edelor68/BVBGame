@@ -9,8 +9,8 @@ function setup(){
 	drawGrid(combat, 8, 10);
 	drawGrid(map, 63, 29);
 	
-	p.players.player1.map.position = findHex("map",  offsetToCube(18, 18));
-	p.players.player1.combat.position = findHex("combat", offsetToCube(2, 5));
+	p.player1.areas.map.position = findHex("map",  offsetToCube(18, 18));
+	p.player1.areas.combat.position = findHex("combat", offsetToCube(2, 5));
 
 	p.createPlayer(map, "player1", "../imgs/monsters/dragon.png")
 	
@@ -174,7 +174,9 @@ function onHexClick(event) {
     const hex = event.currentTarget;
     const grid = hex.closest("svg").id;
 
-    const start = currentPos[grid];
+//!! Needs update once multiple players
+
+    const start = p.player1.areas[grid].position;
 	
 	if (selectedHex) {
 		selectedHex.classList.remove("selected");
