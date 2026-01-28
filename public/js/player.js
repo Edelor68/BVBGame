@@ -1,12 +1,12 @@
-export class Players {
+export default class Players {
 	
     constructor() {
         this.players = {
             player1: {
                 map: {
-                    coordinates: offsetToCube(26, 27)
+                    coordinates: offsetToCube(13, 13)
                 },
-                screen: {
+                combat: {
                     coordinates: offsetToCube(5, 2)
                 },
                 element: null
@@ -18,13 +18,13 @@ export class Players {
         const { x, y } = getHexCenter(hex);
 
         const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
-        img.setAttribute("href", "/imgs/monsters/dragon.png");
-        img.setAttribute("width", 120);
-        img.setAttribute("height", 120);
+        img.setAttribute("href", "../imgs/monsters/dragon.png");
+        img.setAttribute("width", 180);
+        img.setAttribute("height", 180);
 
         // center the sprite
-        img.setAttribute("x", x - 60);
-        img.setAttribute("y", y - 60);
+        img.setAttribute("x", x - 90);
+        img.setAttribute("y", y - 90);
 
         svg.appendChild(img);
 
@@ -38,7 +38,7 @@ export class Players {
 
     movePlayerTo(hex, playerName) {
         const cube = JSON.parse(hex.dataset.cube);
-        const grid = hex.dataset.grid; // "map" or "screen"
+        const grid = hex.dataset.grid; // "map" or "combat"
 
         const coords = this.players[playerName][grid].coordinates;
         coords.q = cube.q;
@@ -48,7 +48,9 @@ export class Players {
         const { x, y } = getHexCenter(hex);
 
         const img = this.players[playerName].element;
-        img.setAttribute("x", x - 60);
-        img.setAttribute("y", y - 60);
+        img.setAttribute("x", x - 90);
+        img.setAttribute("y", y - 90);
+		
+		currentPos[grid] = hex;
     }
 }
