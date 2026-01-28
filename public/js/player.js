@@ -6,32 +6,51 @@ export default class Players {
         this.players = {
             player1: {
                 map: {
-                    coordinates: offsetToCube(13, 13)
+                    position: null
                 },
                 combat: {
-                    coordinates: offsetToCube(5, 2)
+                    position: null
                 },
                 element: null
             }
         };
     }
 
-    createPlayer(svg, hex, playerName) {
-        const { x, y } = getHexCenter(hex);
+    createPlayer(svg, playerName, imgL) {
 
-        const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
-        img.setAttribute("href", "../imgs/monsters/dragon.png");
-        img.setAttribute("width", 180);
-        img.setAttribute("height", 180);
+        if (!this.players[playerName]) {
+            this.players[playerName] = {
+                map: {
+                    position: null
+                },
+                combat: {
+                    position: null
+                },
+                element: null
+            }
+        }
 
-        // center the sprite
-        img.setAttribute("x", x - 90);
-        img.setAttribute("y", y - 90);
+        Object.keys(this.players[playerName]).forEach((p) => {
+            if (this.players[playerName][p].position) {
+                const { x, y } = getHexCenter(this.players[playerName][svg.getAttribute("id")].position);
 
-        svg.appendChild(img);
+                const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                img.setAttribute("href", imgL);
+                img.setAttribute("width", 180);
+                img.setAttribute("height", 180);
 
-        // store reference
-        this.players[playerName].element = img;
+                // center the sprite
+                img.setAttribute("x", x - 90);
+                img.setAttribute("y", y - 90);
+
+                svg.appendChild(img);
+
+                // store reference
+                this.players[playerName].element = img;
+            }
+        })
+
+        
     }
 
     getPlayers() {
@@ -53,6 +72,6 @@ export default class Players {
         img.setAttribute("x", x - 90);
         img.setAttribute("y", y - 90);
 		
-		currentPos[grid] = hex;
+		this.players[playerName][grid].position = hex;
     }
 }

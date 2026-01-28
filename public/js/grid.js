@@ -9,15 +9,21 @@ function setup(){
 	drawGrid(combat, 8, 10);
 	drawGrid(map, 63, 29);
 	
-	currentPos.map = findHex("map",  p.players.player1.map.coordinates.q, p.players.player1.map.coordinates.r, p.players.player1.map.coordinates.s);
-	currentPos.combat = findHex("combat", p.players.player1.combat.coordinates.q, p.players.player1.combat.coordinates.r, p.players.player1.combat.coordinates.s);
+	p.players.player1.map.position = findHex("map",  offsetToCube(18, 18));
+	p.players.player1.combat.position = findHex("combat", offsetToCube(2, 5));
 
-	p.createPlayer(map, currentPos.map, "player1")
+	p.createPlayer(map, "player1", "../imgs/monsters/dragon.png")
 	
 	document.addEventListener("keydown", (event) => { 
-		if (event.key === "m") {
-				if (selectedHex) {p.movePlayerTo(selectedHex, "player1")}; 
-			} 
+		switch (event.key) {
+			case "m":
+				if (selectedHex) {p.movePlayerTo(selectedHex, "player1")};
+				break;
+			case "t":
+				if (selectedHex) {changeTerrain()};
+				break;
+		}
+		
 	});
 }
 
@@ -103,7 +109,6 @@ function setupHex(polygon, display) {
 	polygon.dataset.grid = display.id;
 	polygon.dataset.terrain = "passable";
 	
-	//polygon.addEventListener("mouseover", cursorPosition);
 	polygon.addEventListener("click", onHexClick);
 	display.appendChild(polygon);
 	
@@ -144,36 +149,22 @@ export function offsetToCube(x, y) {
 	return {q: q, r: r, s: s};
 }
 
-function cursorPosition(event) {
-	const grid = event.currentTarget.closest("svg").id
-	let start
-	switch (grid) {
-		case "map":
-			start =  currentPos.map;
-			break;
-		case "combat":
-			start =  currentPos.combat;
-			break;
-	}
-	start.setAttribute("fill", "red");
-	findPath(grid, start, event.currentTarget);
-}
 
-function changeTerrain(event) {
-	const hex = event.currentTarget;
+function changeTerrain() {
+	const hex = selectedHex;
 	const terrain = hex.dataset.terrain
 	switch (terrain) {
 		case "passable":
 			hex.dataset.terrain = "impassable";
 			hex.setAttribute("fill", "brown");
 			hex.setAttribute("stroke", "brown");
-			hex.removeEventListener("mouseover", cursorPosition);
+			hex.removeEventListener("mouseover", selectedHex);
 			break;
 		case "impassable":
 			hex.dataset.terrain = "passable";
 			hex.setAttribute("fill", "transparent");
 			hex.setAttribute("stroke", "black");
-			hex.addEventListener("mouseover", cursorPosition);
+			hex.addEventListener("mouseover", selectedHex);
 			break;
 	}
 }
