@@ -11,7 +11,6 @@ function bindZoom(el) {
 	
 	zoomSlider.value = 0;
 	
-	console.log(zoomSlider.value + 100 + "%")
 	zoomSlider.addEventListener("input", (e) => {
 		el.style.width = Number(zoomSlider.value) + 100 + "%";
 	})

@@ -136,7 +136,7 @@ function findNeigbor(grid, hex, direction) {
 	return [grid, cq + vector["q"], cr + vector["r"], cs + vector["s"]];
 };
 
-function offsetToCube(x, y) {
+export function offsetToCube(x, y) {
 	const oddEven = x & 1;
 	const q = x;
 	const r = y - (x - oddEven) / 2;
