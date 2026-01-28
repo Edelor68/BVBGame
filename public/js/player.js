@@ -1,4 +1,4 @@
-import {offsetToCube} from "./grid.js";
+import {offsetToCube, getHexCenter} from "./grid.js";
 
 export default class Players {
 	

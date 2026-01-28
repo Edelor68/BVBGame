@@ -237,7 +237,7 @@ function findPath(grid, start, end) {
 
 }
 
-function getHexCenter(hex) {
+export function getHexCenter(hex) {
     const pts = hex.getAttribute("points").trim().split(" ");
     let xs = 0, ys = 0;
 
