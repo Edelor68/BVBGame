@@ -1,0 +1,49 @@
+#cursorPosition {
+	background-color: red;
+}
+
+#leftBar { 
+	position: fixed; 
+	top: 0; 
+	left: 0; 
+	width: 12.5%;
+	height: 100vh; 
+	z-index: 1030; 
+} 
+
+
+#gameArea { 
+	position: absolute; 
+	top: 0; 
+	left: 12.5%;
+	width: 87.5%; 
+	height: 100%; 
+}
+
+#screen { 
+	width: 182%; 
+	height: 195%; 
+}
+
+#map {
+	aspect-ratio: 819 / 1024;
+	background-image: url("Map_Zwischenstand.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	width: 100%;
+	border: 5px solid red;
+}
+
+#zoomSlider {
+	position: fixed;
+	bottom: 2%;
+	right: 2%;
+	width: 15%;
+	height: 2%;
+}
+
+
+.hidden {
+	display: none;
+}
+
