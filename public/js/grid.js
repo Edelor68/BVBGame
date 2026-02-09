@@ -17,7 +17,7 @@ async function setup(){
 	document.addEventListener("keydown", (event) => { 
 		switch (event.key) {
 			case "m":
-				if (selectedHex) {
+				if (selectedHex && path.length > 0) {
 					p.movePlayerTo(selectedHex, "player1");
 					const path = selectedHex.closest("svg").querySelector("#pathArrow");
     				if (path) path.remove();
@@ -182,7 +182,6 @@ function setupHex(polygon, display) {
 			break;
 	}
 	
-	polygon.addEventListener("click", onHexClick);
 	display.appendChild(polygon);
 	
 	hexMap.set(key, polygon);
@@ -226,10 +225,10 @@ function changeTerrain() {
 	const terrain = hex.dataset.terrain
 	switch (terrain) {
 		case "passable":
-			setTerrainPassable(hex)
+			setTerrainImpassable(hex)
 			break;
 		case "impassable":
-			setTerrainImpassable(hex)
+			setTerrainPassable(hex)
 			break;
 	}
 }
@@ -240,7 +239,7 @@ function setTerrainImpassable(hex) {
 	hex.dataset.terrain = "impassable";
 	hex.setAttribute("fill", "transparent");
 	hex.setAttribute("stroke", "transparent");
-	hex.removeEventListener("mouseover", selectedHex);
+	hex.removeEventListener("click", onHexClick);
 }
 
 function setTerrainPassable(hex) {
@@ -249,7 +248,7 @@ function setTerrainPassable(hex) {
 	hex.dataset.terrain = "passable";
 	hex.setAttribute("fill", "transparent");
 	hex.setAttribute("stroke", "black");
-	hex.addEventListener("mouseover", selectedHex);
+	hex.addEventListener("click", onHexClick);
 }
 
 function onHexClick(event) {
