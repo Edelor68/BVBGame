@@ -18,6 +18,8 @@ export default class Players {
 
     createPlayer(svg, playerName, imgL) {
 
+        const id = svg.getAttribute("id");
+
         if (!this[playerName]) {
             this[playerName] = {
                 areas: {
@@ -32,25 +34,25 @@ export default class Players {
             };
         }
 
-        Object.keys(this[playerName].areas).forEach((p) => {
-            if (this[playerName].areas[p].position) {
-                const { x, y } = getHexCenter(this[playerName].areas[svg.getAttribute("id")].position);
+        
+        if (this[playerName].areas[id].position) {
+            const { x, y } = getHexCenter(this[playerName].areas[id].position);
 
-                const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
-                img.setAttribute("href", imgL);
-                img.setAttribute("width", 180);
-                img.setAttribute("height", 180);
+            const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+            img.setAttribute("href", imgL);
+            img.setAttribute("width", 180);
+            img.setAttribute("height", 180);
 
-                // center the sprite
-                img.setAttribute("x", x - 90);
-                img.setAttribute("y", y - 90);
+            // center the sprite
+            img.setAttribute("x", x - 90);
+            img.setAttribute("y", y - 90);
 
-                svg.appendChild(img);
+            svg.appendChild(img);
 
-                // store reference
-                this[playerName].element = img;
-            }
-        })
+            // store reference
+            this[playerName].element = img;
+        }
+       
 
         
     }

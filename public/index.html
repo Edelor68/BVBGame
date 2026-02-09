@@ -1,31 +1,31 @@
 <html>
-<head>
-<link rel="stylesheet" href="./css/grid.css">
-<link rel="stylesheet" href="./Bootstrap/css/bootstrap.min.css">
-</head>
+	<head>
+		<link rel="stylesheet" href="./css/grid.css">
+		<link rel="stylesheet" href="./Bootstrap/css/bootstrap.min.css">
+	</head>
 
-<body>
-<div id="TopUI" class="w-100 vh-100 d-relative">
+	<body>
+		<div id="TopUI" class="w-100 vh-100 d-relative">
 
 
-	<div id="leftBar" class="bg-success">
-		<button id="deckBtn" class="btn btn-info">Combat Area</button>
-	</div>
-	
-	<div id="gameArea" class="overflow-auto">
-		<div id="combatArea" class="hidden">
-			<svg id="combat" xmlns="http://www.w3.org/2000/svg"></svg>
+			<div id="leftBar" class="bg-success">
+				<button id="deckBtn" class="btn btn-info">Combat Area</button>
+				<button id="rmvHexBtn" class="btn btn-info">Save selected hexes</button>
+			</div>
+			
+			<div id="gameArea" class="overflow-auto">
+				<div id="combatArea" class="hidden">
+					<svg id="combat" xmlns="http://www.w3.org/2000/svg"></svg>
+				</div>
+				<div id="mapArea">
+					<svg id="map" viewBox="0 0 4292 5390" xmlns="http://www.w3.org/2000/svg"></svg>
+					<input type="range" class="form-range" min="0" max="100" step="1" id="zoomSlider">
+				</div>
+			</div>
+			
 		</div>
-		<div id="mapArea">
-			<svg id="map" viewBox="0 0 4292 5390" xmlns="http://www.w3.org/2000/svg"></svg>
-			<input type="range" class="form-range" min="0" max="100" step="1" id="zoomSlider">
-		</div>
-		
-	</div>
-	
-</div>
-<script type="module" src="./js/grid.js"></script>
-<script src="./js/ui.js"></script>
-<script src="./Bootstrap/js/bootstrap.bundle.min.js"></script>
-</body>
+		<script type="module" src="./js/grid.js"></script>
+		<script type="module" src="./js/ui.js"></script>
+		<script src="./Bootstrap/js/bootstrap.bundle.min.js"></script>
+	</body>
 </html>

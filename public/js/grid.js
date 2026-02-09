@@ -1,22 +1,27 @@
 import Players from "./player.js"
 
-function setup(){
+async function setup(){
 	const map = document.getElementById("map");
 	const combat = document.getElementById("combat");
 	
-	
+	await loadTerrainIndex();
+
 	drawGrid(combat, 8, 10);
-	drawGrid(map, 63, 29);
+	drawGrid(map, 31, 14);
 	
-	p.player1.areas.map.position = findHex("map",  offsetToCube(18, 18));
-	p.player1.areas.combat.position = findHex("combat", offsetToCube(2, 5));
+	p.player1.areas.map.position = findHex("map",  ...offsetToCube(20, 13));
+	p.player1.areas.combat.position = findHex("combat", ...offsetToCube(2, 5));
 
 	p.createPlayer(map, "player1", "../imgs/monsters/dragon.png")
 	
 	document.addEventListener("keydown", (event) => { 
 		switch (event.key) {
 			case "m":
-				if (selectedHex) {p.movePlayerTo(selectedHex, "player1")};
+				if (selectedHex) {
+					p.movePlayerTo(selectedHex, "player1");
+					const path = selectedHex.closest("svg").querySelector("#pathArrow");
+    				if (path) path.remove();
+			};
 				break;
 			case "t":
 				if (selectedHex) {changeTerrain()};
@@ -27,11 +32,69 @@ function setup(){
 }
 
 const hexMap = new Map();
+const terrainIndex = {
+	passable: new Set(),
+	impassable: new Set()
+}
+let terrainIndexCoords = {};
+
 let path = []
 
 let selectedHex = null;
 
-const currentPos = {map: null, combat: null};
+export function getTerrain() {
+	return terrainIndex
+}
+
+async function loadTerrainIndex() {
+    try {
+        const res = await fetch("/load/terrainData.json");
+
+        if (!res.ok) {
+            console.error("Server returned:", res.status);
+            return;
+        }
+
+        const data = await res.json();
+        console.log("Loaded terrain data:", data);
+
+        // Rebuild the index
+        terrainIndexCoords = {};
+
+        for (const [areaName, terrains] of Object.entries(data)) {
+            terrainIndexCoords[areaName] = {};
+
+            for (const [terrainName, coordsList] of Object.entries(terrains)) {
+                terrainIndexCoords[areaName][terrainName] = new Set(
+					coordsList.map(c => c.join(","))
+				);				
+            }
+        }
+
+        console.log("Rebuilt terrainIndexCoords:", terrainIndexCoords);
+
+    } catch (err) {
+        console.error("Load failed:", err);
+    }
+}
+
+
+
+function getTerrainForCoords(areaName, coords) {
+    const terrains = terrainIndexCoords[areaName];
+    if (!terrains) return null;
+
+    const key = Array.isArray(coords) ? coords.join(",") : coords;
+
+    for (const [terrainName, coordSet] of Object.entries(terrains)) {
+        if (coordSet.has(key)) {
+            return terrainName;
+        }
+    }
+
+    return null;
+}
+
 
 
 function drawGrid(display, rowsTarget, columns) {
@@ -91,22 +154,33 @@ function drawGrid(display, rowsTarget, columns) {
 
 function setupHex(polygon, display) {
 	//Style
-	polygon.setAttribute("stroke", "black");
-	polygon.setAttribute("fill", "transparent");
 	polygon.setAttribute("pointer-events", "all");
 	polygon.setAttribute("stroke-width", "2");
 	
 	const cube = offsetToCube(Number(polygon.dataset.offsetX), Number(polygon.dataset.offsetY));
 	polygon.dataset.cube = JSON.stringify(cube);
 	
-	const key = `${display.id},${cube.q},${cube.r},${cube.s}`;
+	const key = `${display.id},${cube[0]},${cube[1]},${cube[2]}`;
 	Object.keys(cube_direction_vectors).forEach((dir) => {
 		const coords = findNeigbor(display.id, polygon, dir);
 		polygon.dataset["neighbor" + dir] = `${coords[0]},${coords[1]},${coords[2]},${coords[3]}`;
 	})
 	
+	
+
 	polygon.dataset.grid = display.id;
-	polygon.dataset.terrain = "passable";
+	const terrain = getTerrainForCoords(display.id, cube)
+	polygon.dataset.terrain = terrain;
+	terrainIndex[terrain].add(polygon);
+
+	switch (terrain) {
+		case "passable":
+			setTerrainPassable(polygon)
+			break;
+		case "impassable":
+			setTerrainImpassable(polygon)
+			break;
+	}
 	
 	polygon.addEventListener("click", onHexClick);
 	display.appendChild(polygon);
@@ -133,19 +207,17 @@ function findHex(grid, q, r, s) {
 }
 
 function findNeigbor(grid, hex, direction) {
-	const cq = JSON.parse(hex.dataset.cube).q;
-	const cr = JSON.parse(hex.dataset.cube).r;
-	const cs = JSON.parse(hex.dataset.cube).s;
+	const [q, r, s] = JSON.parse(hex.dataset.cube);
 	const vector = cube_direction_vectors[direction];
-	return [grid, cq + vector["q"], cr + vector["r"], cs + vector["s"]];
+	return [grid, q + vector["q"], r + vector["r"], s + vector["s"]];
 };
 
 export function offsetToCube(x, y) {
 	const oddEven = x & 1;
-	const q = x;
-	const r = y - (x - oddEven) / 2;
-	const s = -q - r;
-	return {q: q, r: r, s: s};
+	const q = x || 0;
+	const r = y - (x - oddEven) / 2 || 0;
+	const s = -q - r || 0;
+	return [q, r, s];
 }
 
 
@@ -154,20 +226,31 @@ function changeTerrain() {
 	const terrain = hex.dataset.terrain
 	switch (terrain) {
 		case "passable":
-			hex.dataset.terrain = "impassable";
-			hex.setAttribute("fill", "brown");
-			hex.setAttribute("stroke", "brown");
-			hex.removeEventListener("mouseover", selectedHex);
+			setTerrainPassable(hex)
 			break;
 		case "impassable":
-			hex.dataset.terrain = "passable";
-			hex.setAttribute("fill", "transparent");
-			hex.setAttribute("stroke", "black");
-			hex.addEventListener("mouseover", selectedHex);
+			setTerrainImpassable(hex)
 			break;
 	}
 }
 
+function setTerrainImpassable(hex) {
+	terrainIndex.passable.delete(hex);
+	terrainIndex.impassable.add(hex);
+	hex.dataset.terrain = "impassable";
+	hex.setAttribute("fill", "transparent");
+	hex.setAttribute("stroke", "transparent");
+	hex.removeEventListener("mouseover", selectedHex);
+}
+
+function setTerrainPassable(hex) {
+	terrainIndex.impassable.delete(hex);
+	terrainIndex.passable.add(hex);
+	hex.dataset.terrain = "passable";
+	hex.setAttribute("fill", "transparent");
+	hex.setAttribute("stroke", "black");
+	hex.addEventListener("mouseover", selectedHex);
+}
 
 function onHexClick(event) {
     const hex = event.currentTarget;
@@ -218,7 +301,7 @@ function findPath(grid, start, end) {
 		let pathTile = end;
 		while (pathTile != start) {
 			path.push(pathTile);
-			pathTile = findHex(grid, JSON.parse(pathTile.dataset.from).q, JSON.parse(pathTile.dataset.from).r, JSON.parse(pathTile.dataset.from).s);
+			pathTile = findHex(grid, ...JSON.parse(pathTile.dataset.from));
 		}
 		path.push(start);
 		path.reverse();
